@@ -58,7 +58,7 @@ relations:
   - mysql:db
 {{< /highlight >}}
 
-Setting up VLANs, subnets and spaces in MAAS isn't difficult, but it is time consuming to go through all the steps yourself so we have put together a script to do it for you. It starts by reading the charm bundle you give it, then:
+Setting up VLANs, subnets and spaces in MAAS isn't difficult, but it is time consuming to go through all the steps yourself so we have put together a [script to do it for you](https://github.com/dooferlad/jujuWand/blob/master/maas-spaces.py). It starts by reading the charm bundle you give it, then:
 
  1. For each space it finds in the bundle it will:
    1. Create a VLAN in MAAS with a /24 subnet.

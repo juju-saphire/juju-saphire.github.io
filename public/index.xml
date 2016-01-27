@@ -76,7 +76,7 @@
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;Setting up VLANs, subnets and spaces in MAAS isn&amp;rsquo;t difficult, but it is time consuming to go through all the steps yourself so we have put together a script to do it for you. It starts by reading the charm bundle you give it, then:&lt;/p&gt;
+&lt;p&gt;Setting up VLANs, subnets and spaces in MAAS isn&amp;rsquo;t difficult, but it is time consuming to go through all the steps yourself so we have put together a &lt;a href=&#34;https://github.com/dooferlad/jujuWand/blob/master/maas-spaces.py&#34;&gt;script to do it for you&lt;/a&gt;. It starts by reading the charm bundle you give it, then:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;For each space it finds in the bundle it will:
