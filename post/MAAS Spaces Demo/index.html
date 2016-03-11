@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="generator" content="Hugo 0.15" />
+
+  <title>MAAS Spaces Demo &middot; The Juju Sapphire team</title>
+
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/pure-min.css">
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-old-ie-min.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.0/grids-responsive-min.css">
+  <!--<![endif]-->
+
+  <!--[if lte IE 8]>
+  <link rel="stylesheet" href="http://juju-sapphire.github.io/css/side-menu-old-ie.css">
+  <![endif]-->
+  <!--[if gt IE 8]><!-->
+  <link rel="stylesheet" href="http://juju-sapphire.github.io/css/side-menu.css">
+  <!--<![endif]-->
+
+  <link rel="stylesheet" href="http://juju-sapphire.github.io/css/blackburn.css">
+
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet" type="text/css">
+
+  
+  <link rel="alternate" type="application/rss+xml" title="The Juju Sapphire team" href="http://juju-sapphire.github.ioindex.xml" />
+
+  
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/styles/androidstudio.min.css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  
+
+  <link rel="shortcut icon" href="http://juju-sapphire.github.ioimg/favicon.ico" type="image/x-icon" />
+
+</head>
+
+
+<body>
+<div id="layout">
+
+  
+<a href="#menu" id="menuLink" class="menu-link">
+  
+  <span></span>
+</a>
+<div id="menu">
+
+  
+
+  <div class="pure-menu">
+    <ul class="pure-menu-list">
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="http://juju-sapphire.github.io/"><i class='fa fa-home fa-fw'></i>Home</a>
+      
+        </li>
+      
+      
+        <li class="pure-menu-item">
+          <a class="pure-menu-link" href="http://juju-sapphire.github.io/post/"><i class='fa fa-list fa-fw'></i>Posts</a>
+      
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="pure-menu social">
+  <ul class="pure-menu-list">
+
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="http://juju-sapphire.github.ioindex.xml"><i class="fa fa-rss fa-fw"></i>RSS</a>
+    </li>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <li class="pure-menu-item">
+      <a class="pure-menu-link" href="https://github.com/juju-sapphire" target="_blank"><i class="fa fa-github-square fa-fw"></i>GitHub</a>
+    </li>
+    
+
+    
+
+    
+
+  </ul>
+</div>
+
+
+  <div class="pure-g">
+  <div class="small-print pure-u-1 pure-u-md-1-1">
+    <small></small>
+  </div>
+  <div class="small-print pure-u-1 pure-u-md-1-1">
+    <small>Built with&nbsp;<a href="https://gohugo.io/" target="_blank">Hugo</a></small>
+    <small>Theme&nbsp;<a href="https://github.com/yoshiharuyamashita/blackburn" target="_blank">Blackburn</a></small>
+  </div>
+</div>
+
+</div>
+
+
+  <div id="main">
+
+
+<div class="header">
+  <h1>MAAS Spaces Demo</h1>
+  <h2></h2>
+</div>
+<div class="content">
+
+  <div class="post-meta">
+
+  <div>
+    <i class="fa fa-calendar fa-fw"></i>
+    <time>27 Jan 2016, 00:00</time>
+  </div>
+
+  
+
+  
+
+  
+
+</div>
+
+  
+
+<p>In this post we are going to show you Juju 2.0s endpoint binding feature. By using endpoint binding you can deploy a bundle and have each service deployed into one or more spaces using a single command.</p>
+
+<p>If that doesn&rsquo;t make much sense, don&rsquo;t worry, here is a quick run-down of what it means.</p>
+
+<h2 id="bundle:f8823b7dea7671ceac9cf28baf027b39">Bundle</h2>
+
+<p>In Juju a Charm is a recipe for deploying a <a href="https://jujucharms.com/docs/stable/charms-deploying">service</a>. For example the <a href="https://jujucharms.com/mariadb/">mariadb charm</a> tells Juju how to install mariadb and how it <a href="https://jujucharms.com/docs/stable/charms-relations">relates</a> to other services. A bundle instructs Juju how to deploy several charms and how those relationships should be configured.</p>
+
+<h2 id="endpoint:f8823b7dea7671ceac9cf28baf027b39">Endpoint</h2>
+
+<p>Continuing to use mariadb for our examples, mariadb exposes several relations, one of which is &ldquo;db&rdquo;. The combination of a service (mariadb) and a relation (db) is an endpoint.</p>
+
+<h2 id="space:f8823b7dea7671ceac9cf28baf027b39">Space</h2>
+
+<p>A Juju space defines a collection of subnets in which each machine in those subnets can directly talk to each other as well as sharing equivalent firewall rules.</p>
+
+<h1 id="endpoint-binding-the-new-feature:f8823b7dea7671ceac9cf28baf027b39">Endpoint Binding - the new feature</h1>
+
+<p>By binding an endpoint to a space a bundle can configure, for example, all database traffic to be routed over one space while all public facing internet traffic can be kept in another. This traffic separation can be used to isolate different types of traffic for security and performance management.</p>
+
+<h1 id="on-with-the-show:f8823b7dea7671ceac9cf28baf027b39">On with the show!</h1>
+
+<p>We will be using a customised version of the mediawiki bundle that deploys haproxy, mediawiki and mysql. It is pasted below and can be downloaded <a href="http://juju-sapphire.github.io/files/MAAS%20Spaces%20Demo/bundle.yaml">here</a>. Traffic between haproxy and mediawiki is on a space called &ldquo;internal&rdquo; and traffic between mediawiki and mysql is in a space called &ldquo;db&rdquo;. The haproxy website endpoint is bound to the public space. This is all set up using the bindings section of each service.</p>
+
+<p>You will need four machines to run this yourself. For this demonstration we will be placing each space in its own VLAN.</p>
+
+<div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span style="color: #ae81ff">services</span><span style="color: #f8f8f2">:</span>
+  <span style="color: #ae81ff">haproxy</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">charm</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">cs:trusty/haproxy-13</span>
+    <span style="color: #ae81ff">num_units</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #ae81ff">bindings</span><span style="color: #f8f8f2">:</span>
+        <span style="color: #ae81ff">website</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">public</span>
+        <span style="color: #ae81ff">reverseproxy</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">internal</span>
+        <span style="color: #ae81ff">peer</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">internal</span>
+    <span style="color: #ae81ff">expose</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">true</span>
+  <span style="color: #ae81ff">mediawiki</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">charm</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">cs:trusty/mediawiki-3</span>
+    <span style="color: #ae81ff">num_units</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #ae81ff">bindings</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #ae81ff">cache</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">internal</span>
+      <span style="color: #ae81ff">website</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">internal</span>
+      <span style="color: #ae81ff">db</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">db</span>
+    <span style="color: #ae81ff">options</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #ae81ff">name</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">MAAS + Juju Network Spaces Wiki</span>
+  <span style="color: #ae81ff">mysql</span><span style="color: #f8f8f2">:</span>
+    <span style="color: #ae81ff">charm</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">cs:trusty/mysql-29</span>
+    <span style="color: #ae81ff">num_units</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #ae81ff">bindings</span><span style="color: #f8f8f2">:</span>
+      <span style="color: #ae81ff">db</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">db</span>
+      <span style="color: #ae81ff">cluster</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">internal</span>
+<span style="color: #ae81ff">series</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">trusty</span>
+<span style="color: #ae81ff">relations</span><span style="color: #f8f8f2">:</span>
+<span style="color: #f8f8f2">-</span> <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">haproxy:reverseproxy</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">mediawiki:website</span>
+<span style="color: #f8f8f2">-</span> <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">mediawiki:db</span>
+  <span style="color: #f8f8f2">-</span> <span style="color: #ae81ff">mysql:db</span>
+</pre></div>
+
+
+<p>Setting up VLANs, subnets and spaces in MAAS isn&rsquo;t difficult, but it is time consuming to go through all the steps yourself so we have put together a <a href="https://github.com/juju-sapphire/utils/blob/master/maas-spaces.py">script to do it for you</a>. It starts by reading the charm bundle you give it, then:</p>
+
+<ol>
+<li>For each space it finds in the bundle it will:
+
+<ol>
+<li>Create a VLAN in MAAS with a /24 subnet.</li>
+<li>Create a space, then place the VLAN in that space.</li>
+</ol></li>
+<li>Then, for each unit in the charm bundle it will place a node in each VLAN the charm requires.</li>
+<li>Put one node in all spaces for use as the bootstrap node.</li>
+<li>Bootstrap the environment.</li>
+<li>Deploy the charm.</li>
+<li>Check that each endpoint is where it should be.</li>
+</ol>
+
+<p>The only prerequisite for the script is that the fabric that you will be creating VLANs on is called &ldquo;managed&rdquo;:</p>
+
+<pre><code>maas maas fabrics read
+</code></pre>
+
+<p><div class="highlight" style="background: #272822"><pre style="line-height: 125%"><span style="color: #f8f8f2">[</span>
+    <span style="color: #f8f8f2">{</span>
+        <span style="color: #f92672">&quot;resource_uri&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/MAAS/api/1.0/fabrics/0/&quot;</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;vlans&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #f8f8f2">[</span>
+            <span style="color: #f8f8f2">{</span>
+                <span style="color: #f92672">&quot;name&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;untagged&quot;</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;vid&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;mtu&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1500</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;fabric&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;fabric-0&quot;</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;id&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;resource_uri&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/MAAS/api/1.0/vlans/0/&quot;</span>
+            <span style="color: #f8f8f2">}</span>
+        <span style="color: #f8f8f2">],</span> 
+        <span style="color: #f92672">&quot;class_type&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">null</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;name&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;fabric-0&quot;</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;id&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span>
+    <span style="color: #f8f8f2">},</span> 
+    <span style="color: #f8f8f2">{</span>
+        <span style="color: #f92672">&quot;resource_uri&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/MAAS/api/1.0/fabrics/1/&quot;</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;vlans&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #f8f8f2">[</span>
+            <span style="color: #f8f8f2">{</span>
+                <span style="color: #f92672">&quot;name&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;untagged&quot;</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;vid&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">0</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;mtu&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1500</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;fabric&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;fabric-1&quot;</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;id&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">5001</span><span style="color: #f8f8f2">,</span> 
+                <span style="color: #f92672">&quot;resource_uri&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;/MAAS/api/1.0/vlans/5001/&quot;</span>
+            <span style="color: #f8f8f2">}</span>
+        <span style="color: #f8f8f2">],</span> 
+        <span style="color: #f92672">&quot;class_type&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #66d9ef">null</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;name&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #e6db74">&quot;fabric-1&quot;</span><span style="color: #f8f8f2">,</span> 
+        <span style="color: #f92672">&quot;id&quot;</span><span style="color: #f8f8f2">:</span> <span style="color: #ae81ff">1</span>
+    <span style="color: #f8f8f2">}</span>
+  <span style="color: #f8f8f2">]</span>
+</pre></div>
+
+In my case I will be using the fabric that manages the subnet 192.168.1.0/24:</p>
+
+<pre><code>maas maas fabric update 1 name=managed
+</code></pre>
+
+<p>To run the script clone our <a href="https://github.com/juju-sapphire/utils">utils repository</a>, then run:</p>
+
+<pre><code>./maas-spaces.py
+</code></pre>
+
+<p>This will run for a while with the final output being (if all goes to plan):</p>
+
+<pre><code>mediawiki/0 cache 192.168.10.102 in internal
+mediawiki/0 website 192.168.10.102 in internal
+mediawiki/0 db 192.168.12.102 in db
+haproxy/0 website 192.168.11.100 in public
+haproxy/0 peer 192.168.10.100 in internal
+haproxy/0 reverseproxy 192.168.10.100 in internal
+mysql/0 db 192.168.12.101 in db
+mysql/0 cluster 192.168.10.101 in internal
+</code></pre>
+
+<p>You can now access your mediawiki instance on the public address of the haproxy unit, which is shown in the above output to be the only address in the public space. Everything else is on different VLANs.</p>
+
+
+  
+
+  
+
+</div>
+
+</div>
+</div>
+<script src="http://juju-sapphire.github.iojs/ui.js"></script>
+
+
+
+
+</body>
+</html>
+

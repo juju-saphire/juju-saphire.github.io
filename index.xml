@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Juju Sapphire team</title>
+    <link>http://juju-sapphire.github.io/</link>
+    <description>Recent content on The Juju Sapphire team</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 27 Jan 2016 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://juju-sapphire.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>MAAS Spaces Demo</title>
+      <link>http://juju-sapphire.github.io/post/MAAS%20Spaces%20Demo/</link>
+      <pubDate>Wed, 27 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://juju-sapphire.github.io/post/MAAS%20Spaces%20Demo/</guid>
+      <description>
+
+&lt;p&gt;In this post we are going to show you Juju 2.0s endpoint binding feature. By using endpoint binding you can deploy a bundle and have each service deployed into one or more spaces using a single command.&lt;/p&gt;
+
+&lt;p&gt;If that doesn&amp;rsquo;t make much sense, don&amp;rsquo;t worry, here is a quick run-down of what it means.&lt;/p&gt;
+
+&lt;h2 id=&#34;bundle:f8823b7dea7671ceac9cf28baf027b39&#34;&gt;Bundle&lt;/h2&gt;
+
+&lt;p&gt;In Juju a Charm is a recipe for deploying a &lt;a href=&#34;https://jujucharms.com/docs/stable/charms-deploying&#34;&gt;service&lt;/a&gt;. For example the &lt;a href=&#34;https://jujucharms.com/mariadb/&#34;&gt;mariadb charm&lt;/a&gt; tells Juju how to install mariadb and how it &lt;a href=&#34;https://jujucharms.com/docs/stable/charms-relations&#34;&gt;relates&lt;/a&gt; to other services. A bundle instructs Juju how to deploy several charms and how those relationships should be configured.&lt;/p&gt;
+
+&lt;h2 id=&#34;endpoint:f8823b7dea7671ceac9cf28baf027b39&#34;&gt;Endpoint&lt;/h2&gt;
+
+&lt;p&gt;Continuing to use mariadb for our examples, mariadb exposes several relations, one of which is &amp;ldquo;db&amp;rdquo;. The combination of a service (mariadb) and a relation (db) is an endpoint.&lt;/p&gt;
+
+&lt;h2 id=&#34;space:f8823b7dea7671ceac9cf28baf027b39&#34;&gt;Space&lt;/h2&gt;
+
+&lt;p&gt;A Juju space defines a collection of subnets in which each machine in those subnets can directly talk to each other as well as sharing equivalent firewall rules.&lt;/p&gt;
+
+&lt;h1 id=&#34;endpoint-binding-the-new-feature:f8823b7dea7671ceac9cf28baf027b39&#34;&gt;Endpoint Binding - the new feature&lt;/h1&gt;
+
+&lt;p&gt;By binding an endpoint to a space a bundle can configure, for example, all database traffic to be routed over one space while all public facing internet traffic can be kept in another. This traffic separation can be used to isolate different types of traffic for security and performance management.&lt;/p&gt;
+
+&lt;h1 id=&#34;on-with-the-show:f8823b7dea7671ceac9cf28baf027b39&#34;&gt;On with the show!&lt;/h1&gt;
+
+&lt;p&gt;We will be using a customised version of the mediawiki bundle that deploys haproxy, mediawiki and mysql. It is pasted below and can be downloaded &lt;a href=&#34;http://juju-sapphire.github.io/files/MAAS%20Spaces%20Demo/bundle.yaml&#34;&gt;here&lt;/a&gt;. Traffic between haproxy and mediawiki is on a space called &amp;ldquo;internal&amp;rdquo; and traffic between mediawiki and mysql is in a space called &amp;ldquo;db&amp;rdquo;. The haproxy website endpoint is bound to the public space. This is all set up using the bindings section of each service.&lt;/p&gt;
+
+&lt;p&gt;You will need four machines to run this yourself. For this demonstration we will be placing each space in its own VLAN.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #ae81ff&#34;&gt;services&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;haproxy&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;charm&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;cs:trusty/haproxy-13&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;num_units&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;bindings&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;website&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;public&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;reverseproxy&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;internal&lt;/span&gt;
+        &lt;span style=&#34;color: #ae81ff&#34;&gt;peer&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;internal&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;expose&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;true&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mediawiki&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;charm&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;cs:trusty/mediawiki-3&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;num_units&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;bindings&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;cache&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;internal&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;website&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;internal&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;db&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;db&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;options&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;name&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;MAAS + Juju Network Spaces Wiki&lt;/span&gt;
+  &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;charm&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;cs:trusty/mysql-29&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;num_units&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+    &lt;span style=&#34;color: #ae81ff&#34;&gt;bindings&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;db&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;db&lt;/span&gt;
+      &lt;span style=&#34;color: #ae81ff&#34;&gt;cluster&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;internal&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;series&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;trusty&lt;/span&gt;
+&lt;span style=&#34;color: #ae81ff&#34;&gt;relations&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;haproxy:reverseproxy&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mediawiki:website&lt;/span&gt;
+&lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mediawiki:db&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;mysql:db&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Setting up VLANs, subnets and spaces in MAAS isn&amp;rsquo;t difficult, but it is time consuming to go through all the steps yourself so we have put together a &lt;a href=&#34;https://github.com/juju-sapphire/utils/blob/master/maas-spaces.py&#34;&gt;script to do it for you&lt;/a&gt;. It starts by reading the charm bundle you give it, then:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;For each space it finds in the bundle it will:
+
+&lt;ol&gt;
+&lt;li&gt;Create a VLAN in MAAS with a /24 subnet.&lt;/li&gt;
+&lt;li&gt;Create a space, then place the VLAN in that space.&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Then, for each unit in the charm bundle it will place a node in each VLAN the charm requires.&lt;/li&gt;
+&lt;li&gt;Put one node in all spaces for use as the bootstrap node.&lt;/li&gt;
+&lt;li&gt;Bootstrap the environment.&lt;/li&gt;
+&lt;li&gt;Deploy the charm.&lt;/li&gt;
+&lt;li&gt;Check that each endpoint is where it should be.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The only prerequisite for the script is that the fabric that you will be creating VLANs on is called &amp;ldquo;managed&amp;rdquo;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;maas maas fabrics read
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;div class=&#34;highlight&#34; style=&#34;background: #272822&#34;&gt;&lt;pre style=&#34;line-height: 125%&#34;&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;[&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;resource_uri&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/MAAS/api/1.0/fabrics/0/&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;vlans&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;[&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;untagged&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;vid&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;mtu&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1500&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;fabric&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;fabric-0&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;id&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;resource_uri&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/MAAS/api/1.0/vlans/0/&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;],&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;class_type&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #66d9ef&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;fabric-0&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;id&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;},&lt;/span&gt; 
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;{&lt;/span&gt;
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;resource_uri&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/MAAS/api/1.0/fabrics/1/&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;vlans&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #f8f8f2&#34;&gt;[&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;{&lt;/span&gt;
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;untagged&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;vid&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;mtu&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1500&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;fabric&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;fabric-1&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;id&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;5001&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+                &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;resource_uri&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;/MAAS/api/1.0/vlans/5001/&amp;quot;&lt;/span&gt;
+            &lt;span style=&#34;color: #f8f8f2&#34;&gt;}&lt;/span&gt;
+        &lt;span style=&#34;color: #f8f8f2&#34;&gt;],&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;class_type&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #66d9ef&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;name&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #e6db74&#34;&gt;&amp;quot;fabric-1&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;,&lt;/span&gt; 
+        &lt;span style=&#34;color: #f92672&#34;&gt;&amp;quot;id&amp;quot;&lt;/span&gt;&lt;span style=&#34;color: #f8f8f2&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color: #ae81ff&#34;&gt;1&lt;/span&gt;
+    &lt;span style=&#34;color: #f8f8f2&#34;&gt;}&lt;/span&gt;
+  &lt;span style=&#34;color: #f8f8f2&#34;&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+In my case I will be using the fabric that manages the subnet 192.168.1.0/24:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;maas maas fabric update 1 name=managed
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To run the script clone our &lt;a href=&#34;https://github.com/juju-sapphire/utils&#34;&gt;utils repository&lt;/a&gt;, then run:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./maas-spaces.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This will run for a while with the final output being (if all goes to plan):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mediawiki/0 cache 192.168.10.102 in internal
+mediawiki/0 website 192.168.10.102 in internal
+mediawiki/0 db 192.168.12.102 in db
+haproxy/0 website 192.168.11.100 in public
+haproxy/0 peer 192.168.10.100 in internal
+haproxy/0 reverseproxy 192.168.10.100 in internal
+mysql/0 db 192.168.12.101 in db
+mysql/0 cluster 192.168.10.101 in internal
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can now access your mediawiki instance on the public address of the haproxy unit, which is shown in the above output to be the only address in the public space. Everything else is on different VLANs.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
